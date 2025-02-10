@@ -70,9 +70,16 @@ const login = async( req, res ) => {
         token: generateToken(user._id),
     });
 
-}
+};
+
+const GetCurrentUser = async (req, res)=>{
+    const user = req.user;
+
+    res.status(200).json(user);
+};
 
 module.exports = {
    register,
    login,
+   GetCurrentUser,
 };
