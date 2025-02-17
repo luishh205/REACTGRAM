@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
-const { insertPhoto } = require("../controllers/PhotoController");
+const { insertPhoto, deletePhoto, getAllPhotos, getUserPhotos, getPhotoById, updatePhoto, likePhoto, commentPhoto, searchPhotos } = require("../controllers/PhotoController");
 
 const authGuard = require("../middlewares/authGuard");
 const { imageUpload } = require("../middlewares/ImageUpload");
 const validate = require("../middlewares/handleValidation");
-const { photoInsertValidation } = require("../middlewares/photoValidation");
+const { photoInsertValidation, photoUpdateVaidation, commentValidation } = require("../middlewares/photoValidation");
 
 router.post(
     "/",
@@ -15,7 +15,16 @@ router.post(
     photoInsertValidation(),
     validate,
     insertPhoto
-)
+);
+router.delete("/:id", authGuard, deletePhoto);
+router.get("/", authGuard, getAllPhotos);
+router.get("/user/:id", authGuard, getUserPhotos);
+router.get("/search", authGuard, searchPhotos);
 
+router.get("/:id", authGuard, getPhotoById);
+router.put("/:id", authGuard, photoUpdateVaidation(), validate, updatePhoto);
+router.put("/like/:id", authGuard, likePhoto);
+router.put("/comment/:id", authGuard, commentValidation(), validate, commentPhoto)
+router.get("")
 
 module.exports = router;
