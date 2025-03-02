@@ -39,7 +39,7 @@ const newUser = await User.create({
 
 //checar se user foi criado com success
 if(!newUser){
-    res.satus(422).json({erros:["Houve um erro, por favor contrate o suporte!"]})
+    res.satus(422).json({errors:["Houve um erro, por favor contrate o suporte!"]})
     return
 }
 
@@ -54,15 +54,15 @@ const login = async( req, res ) => {
     
     const {email, password} = req.body
 
-    const user = await User.findOne({email})
+    const user = await User.findOne({ email });
 
     if(!user){
-        res.status(404).json({erros:["Usuário não encontrado."]})
+        res.status(404).json({errors:["Usuário não encontrado."]})
         return
     }
 
     if(!(await bcrypt.compare(password, user.password))){
-        res.status(422).json({erros:["Senha inálida"]})
+        res.status(422).json({errors:["Senha inválida"]})
         return
     }
 
@@ -121,15 +121,15 @@ const update = async (req, res) => {
 
 const getUserById = async(req,res) => {
 
-    const {id} = req.params
+    const { id } = req.params
     
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ erros: ["Usuário não encontrado."] });
+        return res.status(400).json({ errors: ["Usuário não encontrado."] });
     }
     const user = await User.findById(id).select("-password");
     
     if(!user){
-        res.status(404).json({erros: ["Usuário não encontrado."]})
+        res.status(404).json({errors: ["Usuário não encontrado."]})
         return
     }
 
