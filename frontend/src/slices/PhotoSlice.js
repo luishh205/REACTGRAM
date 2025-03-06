@@ -19,7 +19,6 @@ export const publishPhoto = createAsyncThunk(
     const data = await photoService.publishPhoto(photo, token);
 
     console.log(data.errors);
-    // Check for errors
     if (data.errors) {
       return thunkAPI.rejectWithValue(data.errors[0]);
     }
@@ -171,7 +170,7 @@ export const photoSlice = createSlice({
       .addCase(publishPhoto.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        state.photo = null;
+        state.photo = {};
       })
       .addCase(getUserPhotos.pending, (state) => {
         state.loading = true;
@@ -212,7 +211,7 @@ export const photoSlice = createSlice({
       .addCase(deletePhoto.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        state.photo = null;
+        state.photo = {};
       })
       .addCase(updatePhoto.pending, (state) => {
         state.loading = true;
