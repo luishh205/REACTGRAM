@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken")
 
 const mongoose = require("mongoose")
 
-const jwtSecret = process.env.JWT_SECRET;
+const jwtSecret = process.env.JWT_SECRET; 
 
 //gerar token
 const generateToken = (id) => {

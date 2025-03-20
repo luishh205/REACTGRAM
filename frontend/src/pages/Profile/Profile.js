@@ -13,7 +13,7 @@ import { useParams } from 'react-router-dom';
 
 //redux
 import { getUserDetails } from '../../slices/UserSlice';
-import { publishPhoto, resetMessage, getUserPhotos, deletePhoto } from '../../slices/PhotoSlice';
+import { publishPhoto, resetMessage, getUserPhotos, deletePhoto, updatePhoto } from '../../slices/PhotoSlice';
 
 const Profile = () => {
   const {id} = useParams();
@@ -27,6 +27,11 @@ const Profile = () => {
 
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
+
+  const [editId, setEditId] = useState("");
+  const [editTitle, setEditTitle] = useState("");
+  const [editImage, setEditImage] = useState("");
+
 
   const newPhotoForm = useRef();
   const editPhotoForm = useRef();
@@ -74,6 +79,37 @@ const handleDelete = (id) => {
   resetComponentMessage();
 }
 
+const handleUpdate = (e) =>{
+  e.preventDefault();
+
+  const photoData = {
+    title: editTitle,
+    id: editId
+  }
+
+  dispatch(updatePhoto(photoData));
+  resetComponentMessage();
+}
+
+const handleCancelEdit = () =>{
+  hideOrshowForms();
+}
+
+const handleEdit = (photo) =>{
+  if(editPhotoForm.current.classList.contains("hide")){
+    hideOrshowForms();
+  }
+
+  setEditId(photo._id)
+  setEditImage(photo.image)
+  setEditTitle(photo.title)
+}
+
+const hideOrshowForms = () => {
+  newPhotoForm.current.classList.toggle("hide");
+  editPhotoForm.current.classList.toggle("hide");
+}
+
 if(loading){
   return <p>Carregando...</p>;
 }
@@ -106,6 +142,17 @@ if(loading){
           {loadingPhoto && <input type="submit" disabled value="Aguarde..."/>}
           </form>
         </div>
+        <div className="edit-photo hide" ref={editPhotoForm}>
+            <p>Editando:</p>
+            {editImage && (
+              <img src={`${uploads}/photos/${editImage}`} alt={editImage}/>
+            )}
+            <form onSubmit={handleUpdate}>
+                <input type="text" onChange={(e) => setEditTitle(e.target.value)} value={editTitle || ""}/>
+                <input type="submit" value="Atualizar"/>
+                <button className="cancel-btn" onClick={handleCancelEdit}>Cancelar edição</button>
+            </form>
+        </div>
         {errorPhoto && <Message msg={errorPhoto} type="error"/>}
         {messagePhoto && <Message msg={messagePhoto} type="success"/>}
         </>
@@ -118,10 +165,10 @@ if(loading){
               {photo.image && (<img src={`${uploads}/photos/${photo.image}`} alt={photo.title}/>)} 
               {id === userAuth._id ? (
               <div className="actions">
-                <Link>
+                <Link to={`/photos/${photo._id}`}>
                   <BsFillEyeFill/>
                 </Link>
-                <BsPencilFill/>
+                <BsPencilFill onClick={() => handleEdit(photo)}/>
                 <BsXLg onClick={()=> handleDelete(photo._id)}/>
               </div>
               ) : (<Link className="btn" to={`/photo/${photo._id}`}>Ver</Link>)}
